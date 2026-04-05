@@ -48,10 +48,6 @@ function AppContent() {
 
         <div className="w-full max-w-md space-y-8 relative z-10">
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest">
-              <ShieldCheck className="w-3 h-3" />
-              Secure Trading Environment
-            </div>
             <h1 className="text-5xl font-black text-white tracking-tighter">
               NEXUS<span className="text-blue-500">TRADE</span>
             </h1>
@@ -138,10 +134,7 @@ function AppContent() {
               </button>
             </div>
             
-            <div className="pt-4 flex items-center justify-center gap-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-              <span className="flex items-center gap-1"><Globe className="w-3 h-3" /> Global Markets</span>
-              <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Encrypted</span>
-            </div>
+          
           </div>
 
           <p className="text-center text-[10px] text-slate-600 uppercase tracking-widest">
