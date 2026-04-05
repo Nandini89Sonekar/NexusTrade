@@ -1,0 +1,57 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "Stores user balance and metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "balance": { "type": "number" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["uid", "email", "balance", "createdAt"]
+    },
+    "trades": {
+      "title": "Trade Transaction",
+      "description": "Records of buy/sell transactions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "symbol": { "type": "string" },
+        "type": { "type": "string", "enum": ["BUY", "SELL"] },
+        "amount": { "type": "number" },
+        "price": { "type": "number" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["userId", "symbol", "type", "amount", "price", "timestamp"]
+    },
+    "portfolios": {
+      "title": "Portfolio Item",
+      "description": "User's current holdings",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "symbol": { "type": "string" },
+        "amount": { "type": "number" },
+        "averagePrice": { "type": "number" }
+      },
+      "required": ["userId", "symbol", "amount", "averagePrice"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profile document"
+    },
+    "/trades/{tradeId}": {
+      "schema": "trades",
+      "description": "Individual trade record"
+    },
+    "/portfolios/{portfolioId}": {
+      "schema": "portfolios",
+      "description": "User portfolio holding"
+    }
+  }
+}
