@@ -3,11 +3,11 @@ import { AuthProvider, useAuth } from './components/AuthContext';
 import { LearningProvider } from './components/LearningContext';
 import { Dashboard } from './components/Dashboard';
 import { MissionGuide } from './components/MissionGuide';
-import { LogIn, ShieldCheck, Globe, Mail, Lock, UserPlus, AlertCircle } from 'lucide-react';
+import { LogIn, ShieldCheck, Mail, Lock, UserPlus, AlertCircle } from 'lucide-react';
 import { cn } from './lib/utils';
 
 function AppContent() {
-  const { user, loading, login, signup, signIn } = useAuth();
+  const { user, loading, login, signup } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -111,19 +111,6 @@ function AppContent() {
                 )}
               </button>
             </form>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-800"></div></div>
-              <div className="relative flex justify-center text-[10px] uppercase tracking-widest"><span className="bg-slate-900 px-2 text-slate-500">Or continue with</span></div>
-            </div>
-
-            <button
-              onClick={signIn}
-              className="w-full flex items-center justify-center gap-3 bg-white text-slate-950 py-3 rounded-xl font-bold hover:bg-slate-100 transition-all active:scale-[0.98]"
-            >
-              <Globe className="w-4 h-4" />
-              Google Authentication
-            </button>
 
             <div className="text-center">
               <button
