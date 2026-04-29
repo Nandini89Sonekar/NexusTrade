@@ -10,14 +10,16 @@ export function NewsFeed() {
   const fetchNews = async () => {
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.NEXUS_API_KEY || '' });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
       
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: "Provide a live market intelligence brief covering the top 3 cryptocurrency and financial market news stories happening right now. Focus on high-impact, market-moving events from the last 24 hours. Format as a concise list of bullet points with bold titles.",
         config: {
-          systemInstruction: "You are a professional financial analyst. Provide a direct, factual market brief. Do not include any conversational filler or mention that you are an AI. Use current knowledge to provide the most recent information possible."
-        }
+          systemInstruction: "You are a professional financial analyst. Provide a direct, factual market brief. Do not include any conversational filler or mention that you are an AI.",
+          tools: [{ googleSearch: {} }] as any,
+          includeServerSideToolInvocations: true
+        } as any
       });
       
       setNews(response.text || 'No news available at the moment.');
