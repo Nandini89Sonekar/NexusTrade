@@ -19,7 +19,7 @@ export function NewsSection() {
   const fetchNews = async () => {
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.NEXUS_API_KEY || '' });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
       
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
@@ -27,6 +27,8 @@ export function NewsSection() {
         config: {
           systemInstruction: "You are a professional financial news aggregator. Provide real, current news headlines and links. Do not include any conversational text or mention that you are an AI.",
           responseMimeType: "application/json",
+          tools: [{ googleSearch: {} }] as any,
+          includeServerSideToolInvocations: true,
           responseSchema: {
             type: Type.ARRAY,
             items: {
@@ -42,7 +44,7 @@ export function NewsSection() {
               required: ["title", "summary", "url", "source", "category", "time"]
             }
           }
-        }
+        } as any
       });
 
       const data = JSON.parse(response.text || '[]');
