@@ -55,6 +55,18 @@ export function Dashboard() {
     </div>
   );
 
+  if (!activeCoin && !loading) return (
+    <div className="flex items-center justify-center h-screen bg-slate-950 text-white">
+      <div className="text-center p-8 bg-slate-900 border border-slate-800 rounded-2xl max-w-md">
+        <p className="text-red-400 font-mono mb-4">CRITICAL ERROR: MARKET DATA DISCONTINUITY</p>
+        <p className="text-slate-400 text-sm mb-6">The connection to global liquidity markets was interrupted. NexusTrade is attempting to reconnect...</p>
+        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-xl font-bold hover:bg-blue-500 transition-all">
+          FORCE RECONNECT
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4">
       <header className="flex items-center justify-between mb-6 px-2">
