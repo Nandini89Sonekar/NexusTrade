@@ -1,32 +1,29 @@
-import { collection, addDoc, doc, updateDoc, increment, onSnapshot, query, where, deleteDoc, setDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 import { useAuth } from '../components/AuthContext';
 import { Trade, PortfolioItem } from '../types';
 import { useEffect, useState } from 'react';
+import { storage } from '../lib/storage';
 
 export function useTrading() {
   const { user, profile } = useAuth();
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [trades, setTrades] = useState<Trade[]>([]);
 
+  // Local state sync with storage
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setTrades([]);
+      setPortfolio([]);
+      return;
+    }
 
-    const qTrades = query(collection(db, 'trades'), where('userId', '==', user.uid));
-    const unsubTrades = onSnapshot(qTrades, (snapshot) => {
-      const t = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Trade));
-      setTrades(t.sort((a, b) => b.timestamp - a.timestamp));
-    });
-
-    const qPortfolio = query(collection(db, 'portfolios'), where('userId', '==', user.uid));
-    const unsubPortfolio = onSnapshot(qPortfolio, (snapshot) => {
-      setPortfolio(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PortfolioItem)));
-    });
-
-    return () => {
-      unsubTrades();
-      unsubPortfolio();
+    const refreshData = () => {
+      setTrades(storage.getTrades(user.uid));
+      setPortfolio(storage.getPortfolios(user.uid));
     };
+
+    refreshData();
+    const interval = setInterval(refreshData, 1000);
+    return () => clearInterval(interval);
   }, [user]);
 
   const executeTrade = async (symbol: string, type: 'BUY' | 'SELL', amount: number, price: number) => {
@@ -37,7 +34,6 @@ export function useTrading() {
       throw new Error('Insufficient balance');
     }
 
-    const portfolioRef = doc(db, 'portfolios', `${user.uid}_${symbol}`);
     const existing = portfolio.find(p => p.symbol === symbol);
 
     if (type === 'SELL' && (!existing || existing.amount < amount)) {
@@ -45,7 +41,7 @@ export function useTrading() {
     }
 
     // 1. Record Trade
-    await addDoc(collection(db, 'trades'), {
+    storage.addTrade({
       userId: user.uid,
       symbol,
       type,
@@ -55,22 +51,25 @@ export function useTrading() {
     });
 
     // 2. Update User Balance
-    const userRef = doc(db, 'users', user.uid);
-    await updateDoc(userRef, {
-      balance: increment(type === 'BUY' ? -cost : cost)
-    });
+    const updatedProfile = {
+      ...profile,
+      balance: profile.balance + (type === 'BUY' ? -cost : cost)
+    };
+    storage.saveUser(updatedProfile);
 
     // 3. Update Portfolio
     if (type === 'BUY') {
       if (existing) {
         const newAmount = existing.amount + amount;
         const newAvgPrice = ((existing.amount * existing.averagePrice) + cost) / newAmount;
-        await updateDoc(portfolioRef, {
+        storage.updatePortfolio({
+          userId: user.uid,
+          symbol,
           amount: newAmount,
           averagePrice: newAvgPrice
         });
       } else {
-        await setDoc(portfolioRef, {
+        storage.updatePortfolio({
           userId: user.uid,
           symbol,
           amount,
@@ -79,15 +78,15 @@ export function useTrading() {
       }
     } else {
       const newAmount = existing!.amount - amount;
-      if (newAmount <= 0) {
-        await deleteDoc(portfolioRef);
-      } else {
-        await updateDoc(portfolioRef, {
-          amount: newAmount
-        });
-      }
+      storage.updatePortfolio({
+        userId: user.uid,
+        symbol,
+        amount: newAmount,
+        averagePrice: existing!.averagePrice
+      });
     }
   };
 
   return { portfolio, trades, executeTrade };
 }
+
