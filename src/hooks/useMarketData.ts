@@ -10,15 +10,19 @@ export function useMarketData() {
     const fetchData = async () => {
       try {
         const response = await fetch('/api/market/trending');
-        if (!response.ok) throw new Error('Failed to fetch');
+        if (!response.ok) throw new Error(`Server connection error: ${response.status}`);
         const json = await response.json();
-        if (Array.isArray(json)) {
+        console.log('Market data received:', json);
+        if (Array.isArray(json) && json.length > 0) {
           setData(json);
+        } else if (Array.isArray(json) && json.length === 0) {
+          throw new Error('Market data is empty');
         } else {
-          throw new Error('Invalid data format');
+          throw new Error('Invalid market data format');
         }
         setLoading(false);
       } catch (err) {
+        console.error('Market data fetch error:', err);
         setError(err instanceof Error ? err.message : 'Unknown error');
         setLoading(false);
       }
