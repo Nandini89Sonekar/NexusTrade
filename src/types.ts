@@ -14,6 +14,7 @@ export interface MarketData {
 
 export interface PortfolioItem {
   id: string;
+  userId: string;
   symbol: string;
   amount: number;
   averagePrice: number;
