@@ -11,7 +11,7 @@ import { PortfolioWidget } from './widgets/PortfolioWidget';
 import { TradingPanel } from './widgets/TradingPanel';
 import { NewsFeed } from './widgets/NewsFeed';
 import { NewsSection } from './NewsSection';
-import { Layout, LogIn, History as HistoryIcon, GraduationCap, Play, Info, Newspaper } from 'lucide-react';
+import { Layout, LogIn, History as HistoryIcon, GraduationCap, Play, Info, Newspaper, Activity, RefreshCw } from 'lucide-react';
 import { cn, formatCurrency } from '../lib/utils';
 import { motion } from 'motion/react';
 import 'react-grid-layout/css/styles.css';
@@ -57,12 +57,27 @@ export function Dashboard() {
 
   if (!activeCoin && !loading) return (
     <div className="flex items-center justify-center h-screen bg-slate-950 text-white">
-      <div className="text-center p-8 bg-slate-900 border border-slate-800 rounded-2xl max-w-md">
-        <p className="text-red-400 font-mono mb-4">CRITICAL ERROR: MARKET DATA DISCONTINUITY</p>
-        <p className="text-slate-400 text-sm mb-6">The connection to global liquidity markets was interrupted. NexusTrade is attempting to reconnect...</p>
-        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-xl font-bold hover:bg-blue-500 transition-all">
-          FORCE RECONNECT
-        </button>
+      <div className="text-center p-8 bg-slate-900/50 border border-slate-800 rounded-2xl max-w-md backdrop-blur-md">
+        <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Activity className="w-8 h-8 text-blue-500 animate-pulse" />
+        </div>
+        <p className="text-xl font-bold mb-2">Syncing with Markets...</p>
+        <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+          We are currently establishing a secure connection to global liquidity providers. 
+          This usually takes a few seconds.
+        </p>
+        <div className="flex flex-col gap-3">
+          <button 
+            onClick={() => window.location.reload()} 
+            className="w-full py-3 bg-blue-600 rounded-xl font-bold hover:bg-blue-500 transition-all flex items-center justify-center gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Refresh Terminal
+          </button>
+          <div className="text-[10px] text-slate-600 uppercase tracking-widest font-mono">
+            Nexus Protocol v4.2.1-stable
+          </div>
+        </div>
       </div>
     </div>
   );
