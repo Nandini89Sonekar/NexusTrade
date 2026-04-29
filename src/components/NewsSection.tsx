@@ -19,10 +19,11 @@ export function NewsSection() {
   const fetchNews = async () => {
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.NEXUS_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.NEXUS_API_KEY || '' });
+      
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: "Retrieve the latest top 6 cryptocurrency and financial market news headlines. For each, provide a title, a short 1-sentence summary, a real source name, a category (e.g., Regulation, Market, Tech), and a realistic URL to a major news site. Output as raw JSON.",
+        contents: "Retrieve the latest top 6 cryptocurrency and financial market news headlines from today. For each, provide a title, a short 1-sentence summary, a real source name, a category (e.g., Regulation, Market, Tech), and a real URL to the news article. Focus on events from the last 24 hours.",
         config: {
           systemInstruction: "You are a professional financial news aggregator. Provide real, current news headlines and links. Do not include any conversational text or mention that you are an AI.",
           responseMimeType: "application/json",
@@ -43,7 +44,7 @@ export function NewsSection() {
           }
         }
       });
-      
+
       const data = JSON.parse(response.text || '[]');
       setArticles(data.length > 0 ? data : getFallbackArticles());
     } catch (error) {
@@ -183,4 +184,3 @@ export function NewsSection() {
 function cn(...classes: any[]) {
   return classes.filter(Boolean).join(' ');
 }
-
