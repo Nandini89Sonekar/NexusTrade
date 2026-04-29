@@ -8,7 +8,8 @@ export default defineConfig(({mode}) => {
   return {
     plugins: [react(), tailwindcss()],
     define: {
-      'process.env.NEXUS_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      'process.env.NEXUS_API_KEY': JSON.stringify(env.GEMINI_API_KEY || process.env.GEMINI_API_KEY),
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || process.env.GEMINI_API_KEY),
       'process.env.NODE_ENV': JSON.stringify(mode),
     },
     resolve: {
@@ -23,3 +24,4 @@ export default defineConfig(({mode}) => {
     },
   };
 });
+
